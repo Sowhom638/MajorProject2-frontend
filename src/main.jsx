@@ -4,6 +4,10 @@ import App from './App.jsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import LeadsList from './pages/LeadsList.jsx'
 import LeadManagement from './pages/LeadManagement.jsx'
+import CreateLeadForm from './pages/CreateLeadForm.jsx'
+import SalesAgentManagement from './pages/SalesAgentManagement.jsx'
+import CreateAgentForm from './pages/CreateAgentForm.jsx'
+import LeadByStatus from './pages/LeadByStatus.jsx'
 
 const router = createBrowserRouter([
   {
@@ -15,8 +19,24 @@ const router = createBrowserRouter([
     element: <LeadsList />
   },
   {
+    path: "/salesagents",
+    element: <SalesAgentManagement />
+  },
+  {
     path: "/leads/:leadId",
     element: <LeadManagement />
+  },
+  {
+    path: "/createLead",
+    element: <CreateLeadForm />
+  },
+  {
+    path: "/createAgent",
+    element: <CreateAgentForm />
+  },
+  {
+    path: "/status/:statusName",
+    element: <LeadByStatus />
   }
 ])
 

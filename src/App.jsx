@@ -10,21 +10,6 @@ function App() {
   const statuses = ['New', 'Contacted', 'Qualified', 'Proposal Sent', 'Closed'];
   const { data: leads, loading, error } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/leads`);
 
-// Generating random color
-function getRandomReadableColorOnWhite() {
-  // Keep RGB values low enough for good contrast with white
-  // Values between 0-100 generally work well
-  const max = 100;
-  const r = Math.floor(Math.random() * (max + 1));
-  const g = Math.floor(Math.random() * (max + 1));
-  const b = Math.floor(Math.random() * (max + 1));
-  
-  return '#' + 
-    r.toString(16).padStart(2, '0') + 
-    g.toString(16).padStart(2, '0') + 
-    b.toString(16).padStart(2, '0');
-}
-  const randomColor = getRandomReadableColorOnWhite();
 
   let filterLeads = [];
   if (leads || leads?.leads?.length > 0) {
@@ -65,7 +50,7 @@ function getRandomReadableColorOnWhite() {
 
                 <div className="d-flex flex-wrap gap-2 mb-4">
                   {filterLeads?.length > 0 ? filterLeads?.map((lead) => (
-                    <span key={lead._id} className="fs-5 bg-light text-dark rounded-pill px-2 py-1" style={{border: `1px solid ${randomColor}` }}>
+                    <span key={lead._id} className="fs-5 bg-light text-dark rounded-pill px-2 py-1" style={{border: `1px solid #b40b51ff` }}>
                       <Link to={`/leads/${lead._id}`} className="text-decoration-none text-dark" >{lead.name}</Link>
                       </span>
                   )) : (
@@ -82,7 +67,7 @@ function getRandomReadableColorOnWhite() {
                   <h6 className="fw-bold mb-2">Lead Status:</h6>
                   <ul className="list-unstyled ms-3">
                     {statuses.map((status) => (
-                      <li className="mb-1">- {status}: <span className="badge bg-success">2</span> leads</li>
+                      <li className="mb-1"><Link to={`/status/${status}`} className='text-decoration-none text-dark'>- {status}: <span className="badge bg-success">{leads?.leads?.filter((lead) => lead.status === status)?.length || 0}</span> leads</Link><MdKeyboardArrowRight/></li>
                     ))}
 
                   </ul>
@@ -90,15 +75,15 @@ function getRandomReadableColorOnWhite() {
 
                 <div className="mb-4">
                   <strong>Quick Filters:</strong>
-                  <span className="badge bg-primary ms-2" style={{ cursor: 'pointer' }}>All</span>
+                  <span className="badge bg-primary ms-2" onClick={() => setSelectedStatus('All')} style={{ cursor: 'pointer' }}>All</span>
                   {statuses.map((status) => (
                     <span onClick={() => setSelectedStatus(status)} className="badge bg-primary ms-2" style={{ cursor: 'pointer' }}>{status}</span>
                   ))}
                 </div>
 
-                <button className="btn btn-primary">
-                  <i className="bi bi-plus-circle me-2">+</i>Add New Lead
-                </button>
+                <Link to="/createLead" className="btn btn-primary">
+                + Add New Lead
+                </Link>
               </div>
             </div>
           </div>
