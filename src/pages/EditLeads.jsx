@@ -1,33 +1,46 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useFetch from "../../useFetch";
-import { Link, useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from 'react-toastify';
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { MdKeyboardArrowLeft } from "react-icons/md";
+import { ToastContainer, toast } from 'react-toastify';
 
-function CreateLeadForm() {
+function EditLeads() {
+    const { leadId } = useParams();
+    const navigate = useNavigate();
+
+    const { data: leadData, loading: leadLoading, error: leadError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/leads/${leadId}`);
+    const { data: salesAgents, loading: salesAgentsLoading, error: salesAgentsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/agents`);
+    const { data: tagsData, loading: tagsLoading, error: tagsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/tags`);
+    const tags = tagsData?.tags || [];
+
     const [agent, setAgent] = useState('');
     const [newTagName, setNewTagName] = useState('');
     const [tag, setTag] = useState([]);
     const [leadName, setLeadName] = useState('');
     const [leadSource, setLeadSource] = useState('');
     const [leadStatus, setLeadStatus] = useState('');
-    const [leadPriority, setLeadPriority] = useState(''); // Fixed typo
+    const [leadPriority, setLeadPriority] = useState('');
     const [timeToClose, setTimeToClose] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState(null);
 
-    const navigate = useNavigate();
-
-    const { data: salesAgents, loading: salesAgentsLoading, error: salesAgentsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/agents`);
-    const { data: tagsData, loading: tagsLoading, error: tagsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/tags`);
-
-    const tags = tagsData?.tags || [];
+    useEffect(() => {
+        if (leadData?.lead) {
+            const lead = leadData.lead;
+            setAgent(lead.salesAgent?._id || lead.salesAgent || '');
+            setTag(Array.isArray(lead.tags) ? lead.tags.map(t => t.name || t).filter(Boolean) : []);
+            setLeadName(lead.name || '');
+            setLeadSource(lead.source || '');
+            setLeadStatus(lead.status || '');
+            setLeadPriority(lead.priority || '');
+            setTimeToClose(lead.timeToClose || 0);
+        }
+    }, [leadData]);
 
     function handleTag(e) {
-        let selectedTagValues = Array.from(e.target.selectedOptions, option => option.value);
-        setTag(selectedTagValues)
+        let selectedValues = Array.from(e.target.selectedOptions, option => option.value);
+        setTag(selectedValues);
     }
-
     async function addNewTag(e) {
         e.preventDefault();
         setIsSubmitting(true);
@@ -55,8 +68,7 @@ function CreateLeadForm() {
             console.log("Tag created:", createdTag);
             toast.success("New Tag is created!");
             setNewTagName('');
-            setInterval(()=> window.location.reload(),2000)
-           
+            setInterval(() => window.location.reload(), 2000)
         } catch (error) {
             console.error("Submission error:", error);
             toast.warning(error.message || 'An unknown error occurred');
@@ -65,52 +77,67 @@ function CreateLeadForm() {
             setIsSubmitting(false);
         }
     }
-    async function addNewLead(e) {
+    async function handleUpdate(e) {
         e.preventDefault();
         setIsSubmitting(true);
         setSubmitError(null);
 
-        const newLead = {
-            name: leadName,
-            source: leadSource,
-            salesAgent: agent,
-            status: leadStatus,
-            tags: tag,
-            timeToClose: Number(timeToClose),
-            priority: leadPriority
-        };
-
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/leads`, {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/leads/${leadId}`, {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(newLead)
+                body: JSON.stringify({
+                    name: leadName,
+                    source: leadSource,
+                    salesAgent: agent,
+                    status: leadStatus,
+                    tags: tag,
+                    timeToClose: Number(timeToClose),
+                    priority: leadPriority
+                })
             });
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || 'Failed to create lead');
+                throw new Error(errorData.message || 'Failed to update lead');
             }
 
-            const createdLead = await response.json();
-            console.log("Lead created:", createdLead);
-            toast.success("New Lead is created!");
-            setLeadName('');
-            setLeadSource('');
-            setLeadStatus('');
-            setLeadPriority('');
-            setTimeToClose(0);
-            setTag([]);
-            setTimeout(()=> navigate('/'),2000);
+            const updatedLead = await response.json();
+            console.log("Lead updated:", updatedLead);
+            toast.success("Lead is updated!");
+            setTimeout(() => navigate(`/leads/${leadId}`), 2000)
+
         } catch (error) {
-            console.error("Submission error:", error);
+            console.error("Update error:", error);
             toast.warning(error.message || 'An unknown error occurred');
-            setSubmitError(error.message || "An error occurred while creating the lead.");
+            setSubmitError(error.message || "An error occurred while editing the lead.");
         } finally {
             setIsSubmitting(false);
         }
+    }
+
+    if (leadLoading) {
+        return (
+            <div className="container mt-5 text-center">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading lead...</span>
+                </div>
+                <p>Loading lead details...</p>
+            </div>
+        );
+    }
+
+    if (leadError || !leadData?.lead) {
+        return (
+            <div className="container mt-5">
+                <div className="alert alert-danger">
+                    {leadError || "Lead not found."}
+                </div>
+                <Link to="/leads" className="btn btn-secondary">← Back to Leads</Link>
+            </div>
+        );
     }
 
     return (
@@ -120,7 +147,7 @@ function CreateLeadForm() {
 
                 <div className="card shadow-sm border rounded-3">
                     <div className="card-header bg-white text-center py-3">
-                        <h5 className="mb-0 fw-bold text-primary">Add New Lead</h5>
+                        <h5 className="mb-0 fw-bold text-primary">Edit Lead</h5>
                     </div>
 
                     <div className="card-body p-0">
@@ -129,8 +156,8 @@ function CreateLeadForm() {
                             <div className="col-md-3 border-end bg-light">
                                 <div className="p-3">
                                     <h6 className="text-secondary fw-bold mb-3">Navigation</h6>
-                                    <Link to="/" className="text-dark text-decoration-none d-block p-2">
-                                        <MdKeyboardArrowLeft /> Back to Dashboard
+                                    <Link to={`/leads/${leadId}`} className="text-dark text-decoration-none d-block p-2">
+                                        <MdKeyboardArrowLeft /> Back to Lead
                                     </Link>
                                 </div>
                             </div>
@@ -140,8 +167,7 @@ function CreateLeadForm() {
                                 {submitError && (
                                     <div className="alert alert-danger">{submitError}</div>
                                 )}
-
-                                <form onSubmit={addNewLead}>
+                                <form onSubmit={handleUpdate}>
                                     <div className="form-group my-2">
                                         <label htmlFor="leadName">Lead Name</label>
                                         <input
@@ -181,17 +207,17 @@ function CreateLeadForm() {
                                         >
                                             <option value="" disabled>--Select Agent--</option>
                                             {salesAgentsLoading ? (
-                                                <option disabled>Loading agents...</option>
+                                                <option disabled>Loading...</option>
                                             ) : salesAgentsError ? (
-                                                <option disabled>Error loading agents</option>
+                                                <option disabled>Error loading</option>
                                             ) : salesAgents?.length > 0 ? (
-                                                salesAgents.map((agent) => (
-                                                    <option key={agent._id} value={agent._id}>
-                                                        {agent.name}
+                                                salesAgents.map((agentItem) => (
+                                                    <option key={agentItem._id} value={agentItem._id}>
+                                                        {agentItem.name}
                                                     </option>
                                                 ))
                                             ) : (
-                                                <option disabled>No agents available</option>
+                                                <option disabled>No agents</option>
                                             )}
                                         </select>
                                     </div>
@@ -213,7 +239,7 @@ function CreateLeadForm() {
                                     </div>
 
                                     <div className="form-group my-2">
-                                        <label htmlFor="leadPriority">Lead Priority</label> {/* Fixed label */}
+                                        <label htmlFor="leadPriority">Lead Priority</label>
                                         <select
                                             id="leadPriority"
                                             className="form-control"
@@ -266,22 +292,20 @@ function CreateLeadForm() {
                                             )}
                                         </select>
                                         <small className="form-text text-muted">
-                                            Hold <kbd>Ctrl</kbd> or <kbd>Cmd</kbd> to select multiple tags.
+                                            Hold <kbd>Ctrl</kbd> or <kbd>Cmd</kbd> to select multiple.
                                         </small>
                                     </div>
-
-                                        <div className="d-flex gap-3 flex-wrap align-items-end">
-                                            <div className="form-group my-1">
-                                                <input
-                                                    type="text"
-                                                    placeholder="Add new tag"
-                                                    className="form-control"
-                                                    value={newTagName}
-                                                    onChange={(e) => setNewTagName(e.target.value)}
-                                                />
-                                            </div>
-                                            <button  disabled={isSubmitting} onClick={addNewTag} className="btn btn-secondary my-1" style={{height: "fit-content"}}>
-                                                {isSubmitting ? (
+                                    <div className="d-flex gap-3 flex-wrap align-items-end">
+                                        <div className="form-group my-1">
+                                            <input
+                                                type="text"
+                                                placeholder="Add new tag"
+                                                className="form-control"
+                                                value={newTagName}
+                                                onChange={(e) => setNewTagName(e.target.value)}
+                                            />
+                                        </div>
+                                        <button disabled={isSubmitting} onClick={addNewTag} className="btn btn-secondary my-1" style={{ height: "fit-content" }}>{isSubmitting ? (
                                             <>
                                                 <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                                 Adding...
@@ -289,7 +313,8 @@ function CreateLeadForm() {
                                         ) : (
                                             " Add"
                                         )}</button>
-                                        </div>
+                                    </div>
+
 
                                     <button
                                         type="submit"
@@ -298,11 +323,11 @@ function CreateLeadForm() {
                                     >
                                         {isSubmitting ? (
                                             <>
-                                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                Creating...
+                                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                                Updating...
                                             </>
                                         ) : (
-                                            " Create Lead"
+                                            " Update Lead"
                                         )}
                                     </button>
                                 </form>
@@ -316,4 +341,4 @@ function CreateLeadForm() {
     );
 }
 
-export default CreateLeadForm;
+export default EditLeads;

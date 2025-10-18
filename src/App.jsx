@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
+import 'react-toastify/dist/ReactToastify.css';
 import { Link } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import useFetch from '../useFetch'
 import { MdKeyboardArrowRight } from "react-icons/md";
 
@@ -18,6 +20,7 @@ function App() {
 
   return (
     <>
+    <ToastContainer position="bottom-right" />
       <div className="container mt-4">
         <h2 className="mb-4">Anvaya CRM</h2>
 

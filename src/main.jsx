@@ -8,6 +8,9 @@ import CreateLeadForm from './pages/CreateLeadForm.jsx'
 import SalesAgentManagement from './pages/SalesAgentManagement.jsx'
 import CreateAgentForm from './pages/CreateAgentForm.jsx'
 import LeadByStatus from './pages/LeadByStatus.jsx'
+import LeadsByAgent from './pages/LeadsByAgent.jsx'
+import Settings from './pages/Settings.jsx'
+import EditLeads from './pages/EditLeads.jsx'
 
 const router = createBrowserRouter([
   {
@@ -19,8 +22,16 @@ const router = createBrowserRouter([
     element: <LeadsList />
   },
   {
+    path: "/settings",
+    element: <Settings />
+  },
+  {
     path: "/salesagents",
     element: <SalesAgentManagement />
+  },
+  {
+    path: "/salesagents/:agentId",
+    element: <LeadsByAgent />
   },
   {
     path: "/leads/:leadId",
@@ -29,6 +40,10 @@ const router = createBrowserRouter([
   {
     path: "/createLead",
     element: <CreateLeadForm />
+  },
+  {
+    path: "/editLead/:leadId",
+    element: <EditLeads />
   },
   {
     path: "/createAgent",

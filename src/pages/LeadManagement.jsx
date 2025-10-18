@@ -113,9 +113,9 @@ function LeadManagement() {
                                                 {'  '}No lead of this status or salesAgents</div>
                                         )}
                                 </div>
-                                <button className="btn btn-primary">
+                                <Link to={`/editLead/${leadId}`} className="btn btn-primary">
                                     Edit Lead Details
-                                </button>
+                                </Link>
                                 <hr />
 
                                 <div className="mb-4">
