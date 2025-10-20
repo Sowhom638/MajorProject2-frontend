@@ -11,6 +11,7 @@ import LeadByStatus from './pages/LeadByStatus.jsx'
 import LeadsByAgent from './pages/LeadsByAgent.jsx'
 import Settings from './pages/Settings.jsx'
 import EditLeads from './pages/EditLeads.jsx'
+import Reports from './pages/Reports.jsx'
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
   {
     path: "/settings",
     element: <Settings />
+  },
+  {
+    path: "/reports",
+    element: <Reports />
   },
   {
     path: "/salesagents",
