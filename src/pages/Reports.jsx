@@ -95,7 +95,7 @@ function Reports() {
                                         ) : error ? (
                                             <p className="text-danger">{error}</p>
                                         ) : (
-                                            'No leads match the current filters.'
+                                            'No leads found.'
                                         )}
                                     </div>
                                 )}
@@ -156,7 +156,7 @@ function Reports() {
                                         ) : error ? (
                                             <p className="text-danger">{error}</p>
                                         ) : (
-                                            'No leads match the current filters.'
+                                            'No leads found.'
                                         )}
                                     </div>
                                 )}
