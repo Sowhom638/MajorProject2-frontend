@@ -8,14 +8,13 @@ function LeadManagement() {
     const [remainingDays, setRemainingDays] = useState(null);
     const [agent, setAgent] = useState('');
     const [commentText, setCommentText] = useState('');
-      const [refetchTrigger, setRefetchTrigger] = useState(0); // ✅ Add this
 
 
   const { data: lead, loading: leadsLoading, error: leadsError } = useFetch(
-    `${import.meta.env.VITE_BACKEND_URL}/leads/${leadId}?_=${refetchTrigger}`
+    `${import.meta.env.VITE_BACKEND_URL}/leads/${leadId}`
   );
   const { data: comments, loading: commentsLoading, error: commentsError } = useFetch(
-    `${import.meta.env.VITE_BACKEND_URL}/leads/${leadId}/comments?_=${refetchTrigger}`
+    `${import.meta.env.VITE_BACKEND_URL}/leads/${leadId}/comments`
   );const { data: salesAgents, loading: salesAgentsLoading, error: salesAgentsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/agents`);
     useEffect(() => {
         if (lead) if (!lead?.lead?.createdAt || !lead?.lead?.timeToClose) return;
