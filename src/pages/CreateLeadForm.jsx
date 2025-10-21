@@ -76,7 +76,7 @@ function CreateLeadForm() {
             salesAgent: agent,
             status: leadStatus,
             tags: tag,
-            timeToClose: Number(timeToClose),
+            timeToClose: leadStatus === 'Closed' ? 0 : Number(timeToClose),
             priority: leadPriority
         };
 

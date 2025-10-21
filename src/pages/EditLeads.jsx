@@ -33,7 +33,11 @@ function EditLeads() {
             setLeadSource(lead.source || '');
             setLeadStatus(lead.status || '');
             setLeadPriority(lead.priority || '');
+            if(lead.status === 'Closed'){
+            setTimeToClose(0);
+            }else{
             setTimeToClose(lead.timeToClose || 0);
+            }
         }
     }, [leadData]);
 
@@ -94,7 +98,7 @@ function EditLeads() {
                     salesAgent: agent,
                     status: leadStatus,
                     tags: tag,
-                    timeToClose: Number(timeToClose),
+                    timeToClose: leadStatus === 'Closed' ? 0 : Number(timeToClose),
                     priority: leadPriority
                 })
             });
