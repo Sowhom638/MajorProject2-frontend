@@ -8,14 +8,9 @@ function LeadManagement() {
     const [remainingDays, setRemainingDays] = useState(null);
     const [agent, setAgent] = useState('');
     const [commentText, setCommentText] = useState('');
-
-
-  const { data: lead, loading: leadsLoading, error: leadsError } = useFetch(
-    `${import.meta.env.VITE_BACKEND_URL}/leads/${leadId}`
-  );
-  const { data: comments, loading: commentsLoading, error: commentsError } = useFetch(
-    `${import.meta.env.VITE_BACKEND_URL}/leads/${leadId}/comments`
-  );const { data: salesAgents, loading: salesAgentsLoading, error: salesAgentsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/agents`);
+    const { data: lead, loading: leadsLoading, error: leadsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/leads/${leadId}`);
+    const { data: comments, loading: commentsLoading, error: commentsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/leads/${leadId}/comments`);
+    const { data: salesAgents, loading: salesAgentsLoading, error: salesAgentsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/agents`);
     useEffect(() => {
         if (lead) if (!lead?.lead?.createdAt || !lead?.lead?.timeToClose) return;
 
@@ -105,11 +100,9 @@ function LeadManagement() {
                                         <div className="py-2">
                                             <p className="px-3" style={{ color: `#4C763B` }}><b>Name:</b> {lead?.lead.name}</p>
                                             <p className="px-3"><b>Status:</b> {lead?.lead.status}</p>
-                                            <p className="px-3"><b>Sales Agent:</b> {lead?.lead?.salesAgent?.name || "SalesAgent not found"}</p>
+                                            <p className="px-3"><b>Sales Agent:</b> {lead?.lead.salesAgent.name || "SalesAgent not found"}</p>
                                             <p className="px-3"><b>Lead Source:</b> {lead?.lead.source}</p>
-                                            <p className="px-3"><b>Time to close:</b> in {
-                                                lead?.status === 'Closed' ? 0 : remainingDays || 0
-                                        } days</p>
+                                            <p className="px-3"><b>Time to close:</b> in {remainingDays} days</p>
                                         </div>)
                                         : (
                                             <div className="py-2 d-flex gap-3">
@@ -127,7 +120,7 @@ function LeadManagement() {
 
                                 <div className="mb-4">
                                     <h6 className="text-secondary fw-bold mb-3">Comments</h6>
-                                    {comments && comments?.comments?.length > 0  && comments?.comments?.filter((comment)=>comment.lead === leadId)?.length > 0 ?
+                                    {comments && comments?.comments?.length > 0  && comments?.comments?.filter((comment)=>comment.lead === leadId)?.length > 0 &&
                                         (
                                             <div>
                                                 {comments?.comments?.filter((comment)=>comment.lead === leadId)?.map((comment) => (
@@ -138,13 +131,7 @@ function LeadManagement() {
                                                     </div>
                                                 ))}
                                             </div>
-                                        ) : (
-                                            <div>
-                                                {commentsLoading && <div className="spinner-border text-secondary" role="status">
-                                                    <span className="visually-hidden">Loading...</span>
-                                                </div>}
-                                                {commentsError && <p>{commentsError}</p>}
-                                            </div>)
+                                        )
                                     }
 
                                 </div>
