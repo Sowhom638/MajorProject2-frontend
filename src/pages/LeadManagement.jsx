@@ -8,9 +8,15 @@ function LeadManagement() {
     const [remainingDays, setRemainingDays] = useState(null);
     const [agent, setAgent] = useState('');
     const [commentText, setCommentText] = useState('');
-    const { data: lead, loading: leadsLoading, error: leadsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/leads/${leadId}`);
-    const { data: comments, loading: commentsLoading, error: commentsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/leads/${leadId}/comments`);
-    const { data: salesAgents, loading: salesAgentsLoading, error: salesAgentsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/agents`);
+      const [refetchTrigger, setRefetchTrigger] = useState(0); // ✅ Add this
+
+
+  const { data: lead, loading: leadsLoading, error: leadsError } = useFetch(
+    `${import.meta.env.VITE_BACKEND_URL}/leads/${leadId}?_=${refetchTrigger}`
+  );
+  const { data: comments, loading: commentsLoading, error: commentsError } = useFetch(
+    `${import.meta.env.VITE_BACKEND_URL}/leads/${leadId}/comments?_=${refetchTrigger}`
+  );const { data: salesAgents, loading: salesAgentsLoading, error: salesAgentsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/agents`);
     useEffect(() => {
         if (lead) if (!lead?.lead?.createdAt || !lead?.lead?.timeToClose) return;
 
@@ -102,7 +108,7 @@ function LeadManagement() {
                                             <p className="px-3"><b>Status:</b> {lead?.lead.status}</p>
                                             <p className="px-3"><b>Sales Agent:</b> {lead?.lead?.salesAgent?.name || "SalesAgent not found"}</p>
                                             <p className="px-3"><b>Lead Source:</b> {lead?.lead.source}</p>
-                                            <p className="px-3"><b>Time to close:</b> in {remainingDays} days</p>
+                                            <p className="px-3"><b>Time to close:</b> in {remainingDays || 0} days</p>
                                         </div>)
                                         : (
                                             <div className="py-2 d-flex gap-3">
