@@ -15,7 +15,7 @@ function Settings() {
                 const data = await response.json();
                 if (data) {
                     console.log(data);
-                    toast.info("New Tag is deleted!");
+                    toast.info("Lead is deleted!");
                     setInterval(() => window.location.reload(), 2000)
                 } else {
                     throw 'Failed to delete the Lead'
