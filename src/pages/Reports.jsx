@@ -105,7 +105,7 @@ function Reports() {
                                 {salesAgents?.length > 0 ? (
                                     <div className='d-flex justify-content-center align-items-center gap-4 my-2'>
                                         <BarChart
-                                            style={{ width: '50%', maxWidth: '300px', heighteight: '200px', aspectRatio: 1.618 }}
+                                            style={{ width: '100%', heighteight: '200px', aspectRatio: 2, overflowX: 'scroll' }}
                                             responsive
                                             data={closedBySalesAgent_BarChartData}
                                         >

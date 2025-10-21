@@ -1,27 +1,37 @@
 import { useState } from "react";
 import useFetch from "../../useFetch";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { MdKeyboardArrowLeft } from "react-icons/md";
 import { MdKeyboardArrowRight } from "react-icons/md";
 
 function LeadByStatus() {
     const { statusName } = useParams();
-    const [selectedPriority, setSelectedPriority] = useState('All');
-    const [agent, setAgent] = useState('All');
+    const [searchParams, setSearchParams] = useSearchParams();
     const [sortFilter, setSortFilter] = useState('');
     const priorities = ['High', 'Medium', 'Low'];
     const { data: leads, loading: leadsLoading, error: leadsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/leads`);
     const { data: salesAgents, loading: salesAgentsLoading, error: salesAgentsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/agents`);
 
+    const currentPriority = searchParams.get('priority') || 'All';
+    const currentAgent = searchParams.get('salesAgent') || 'All';
 
     let filterLeads = [];
-    if (leads || leads?.leads?.length > 0) {
-        filterLeads = leads?.leads && leads?.leads?.filter((lead) => lead.status === statusName);
-        filterLeads = selectedPriority === 'All' ? filterLeads : filterLeads.filter((lead) => lead.priority === selectedPriority)
+    if (leads?.leads) {
+        filterLeads = leads.leads.filter((lead)=> lead.status === statusName)
     }
-    if (salesAgents || salesAgents?.length > 0) {
-        filterLeads = agent === "All" ? filterLeads : filterLeads?.filter((lead) => lead.salesAgent.name === agent);
-    }
+  if (filterLeads?.length > 0) {
+    filterLeads = filterLeads?.filter(lead => {
+
+      if (currentPriority !== 'All' && lead.priority !== currentPriority) {
+        return false;
+      }
+
+      if (currentAgent !== 'All' && lead.salesAgent?.name !== currentAgent) {
+        return false;
+      }
+      return true;
+    });
+  }
 
     if (filterLeads.length > 0) {
         if(sortFilter === "HighToLow"){
@@ -30,6 +40,18 @@ function LeadByStatus() {
             filterLeads = [...filterLeads].sort((a, b)=> a.timeToClose - b.timeToClose)
         }
     }
+
+  const updateFilter = (newParams) => {
+    const updated = new URLSearchParams(searchParams);
+    Object.entries(newParams).forEach(([key, value]) => {
+      if (value === 'All') {
+        updated.delete(key);
+      } else {
+        updated.set(key, value);
+      }
+    });
+    setSearchParams(updated);
+  };
 
     return (
         <>
@@ -94,15 +116,15 @@ function LeadByStatus() {
                                 <div className="mb-4">
                                     <h6 className="text-secondary fw-bold mb-3">Quick Filters</h6>
                                     <strong>Priority:</strong>
-                                    <span className="badge bg-primary ms-2" onClick={() => setSelectedPriority('All')} style={{ cursor: 'pointer' }}>All</span>
+                                    <span className="badge bg-primary ms-2" onClick={() => updateFilter({ priority: 'All' })} style={{ cursor: 'pointer' }}>All</span>
                                     {priorities.map((priority) => (
-                                        <span onClick={() => setSelectedPriority(priority)} className="badge bg-primary ms-2" style={{ cursor: 'pointer' }}>{priority}</span>
+                                        <span onClick={() => updateFilter({ priority })} className="badge bg-primary ms-2" style={{ cursor: 'pointer' }}>{priority}</span>
                                     ))}
                                     <br />
                                     <strong>SalesAgents:</strong>
-                                    <span className="badge bg-secondary ms-2" onClick={() => setAgent('All')} style={{ cursor: 'pointer' }}>All</span>
+                                    <span className="badge bg-secondary ms-2" onClick={() => updateFilter({ salesAgent: 'All' })} style={{ cursor: 'pointer' }}>All</span>
                                     {salesAgents && salesAgents?.length > 0 ? salesAgents?.map((agent) => (
-                                        <span key={agent._id} onClick={() => setAgent(agent.name)} className="badge bg-secondary ms-2" style={{ cursor: 'pointer' }}>{agent.name}</span>
+                                        <span key={agent._id} onClick={() => updateFilter({ salesAgent: agent.name })} className="badge bg-secondary ms-2" style={{ cursor: 'pointer' }}>{agent.name}</span>
                                     )) : (
                                         <span className="badge bg-secondary ms-2">
                                             {salesAgentsLoading && <div className="spinner-border text-light" role="status">
