@@ -29,7 +29,7 @@ function Reports() {
     ];
     const closedBySalesAgent_BarChartData = salesAgents && salesAgents?.length > 0 ? salesAgents?.map((agent) => ({
         name: agent.name,
-        value: leads && leads?.leads?.length > 0 ? leads?.leads?.filter((lead) => lead.salesAgent._id === agent._id)?.filter((lead) => lead.status === 'Closed')?.length : 0
+        value: leads && leads?.leads?.length > 0 ? leads?.leads?.filter((lead) => lead.salesAgent?._id === agent._id)?.filter((lead) => lead.status === 'Closed')?.length : 0
     })) : [];
 
     console.log(closedBySalesAgent_BarChartData);

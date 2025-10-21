@@ -5,20 +5,9 @@ import { MdKeyboardArrowLeft } from "react-icons/md";
 import { MdKeyboardArrowRight } from "react-icons/md";
 
 function SalesAgentManagement() {
-       const [selectedStatus, setSelectedStatus] = useState('All');
-    const [agent, setAgent] = useState('All');
-    const statuses = ['New', 'Contacted', 'Qualified', 'Proposal Sent', 'Closed'];
-    const { data: leads, loading: leadsLoading, error: leadsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/leads`);
     const { data: salesAgents, loading: salesAgentsLoading, error: salesAgentsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/agents`);
 
 
-    let filterLeads = [];
-    if (leads || leads?.leads?.length > 0) {
-        filterLeads = selectedStatus === "All" ? leads?.leads : leads?.leads?.filter((lead) => lead.status === selectedStatus);
-    }
-    if (salesAgents || salesAgents?.length > 0) {
-        filterLeads = agent === "All" ? filterLeads : filterLeads?.filter((lead) => lead.salesAgent.name === agent);
-    }
 
     return (
         <>

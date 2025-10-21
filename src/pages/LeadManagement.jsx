@@ -100,7 +100,7 @@ function LeadManagement() {
                                         <div className="py-2">
                                             <p className="px-3" style={{ color: `#4C763B` }}><b>Name:</b> {lead?.lead.name}</p>
                                             <p className="px-3"><b>Status:</b> {lead?.lead.status}</p>
-                                            <p className="px-3"><b>Sales Agent:</b> {lead?.lead.salesAgent.name}</p>
+                                            <p className="px-3"><b>Sales Agent:</b> {lead?.lead?.salesAgent?.name || "SalesAgent not found"}</p>
                                             <p className="px-3"><b>Lead Source:</b> {lead?.lead.source}</p>
                                             <p className="px-3"><b>Time to close:</b> in {remainingDays} days</p>
                                         </div>)

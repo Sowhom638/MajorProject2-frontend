@@ -5,7 +5,30 @@ import { ToastContainer, toast } from 'react-toastify';
 
 function Settings() {
     const { data: leads, loading: leadsLoading, error: leadsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/leads`);
+    const { data: salesAgents, loading: salesAgentsLoading, error: salesAgentsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/agents`);
 
+    async function handleDeleteAgent(agentId) {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/agents/${agentId}`, {
+                method: 'DELETE'
+            })
+            if (response.ok) {
+                const data = await response.json();
+                if (data) {
+                    console.log(data);
+                    toast.info("Agent is deleted!");
+                    setInterval(() => window.location.reload(), 2000)
+                } else {
+                    throw 'Failed to delete the Agent'
+                }
+            } else {
+                const errData = await response.json();
+                throw new Error(errData.message);
+            }
+        } catch (error) {
+            toast.warning(error.message || 'An unknown error occurred');
+        }
+    }
     async function handleDeleteLead(leadId) {
         try {
             const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/leads/${leadId}`, {
@@ -69,7 +92,7 @@ function Settings() {
                                             <div className="py-2 d-flex mb-1" key={lead._id}>
                                                 <span className="md:mx-5 sm:mx-2" style={{ color: `#4C763B` }}>--{lead.name.length > 8 ? lead.name.slice(0, 10) + '...' : lead.name}--</span>
                                                 <span className="md:mx-5 sm:mx-2">--{lead.status}--</span>
-                                                <span className="md:mx-5 sm:mx-2">--{lead.salesAgent.name}-----<button className="bg-danger text-white border-none rounded" onClick={() => handleDeleteLead(lead._id)}>Delete</button></span>
+                                                <span className="md:mx-5 sm:mx-2">--{lead.salesAgent?.name || "SalesAgent not found"}-----<button className="bg-danger text-white rounded" onClick={() => handleDeleteLead(lead._id)}>Delete</button></span>
                                                 <hr />
                                             </div>
                                         )) : (
@@ -85,12 +108,32 @@ function Settings() {
                                 </div>
 
                                 <hr />
+                                <h6 className="text-secondary fw-bold mb-3">Sales Agents</h6>
 
+                                <div className="mb-4">
+                                                                    {salesAgents && salesAgents?.length > 0 ? salesAgents?.map((agent) => (
+                                                                        <p key={agent._id} onClick={() => setAgent(agent.name)} className="ms-2" style={{ cursor: 'pointer' }}><span>Agent:</span> <b>{agent.name}</b> - {agent.email}--<button className="bg-danger text-white rounded" onClick={() => handleDeleteAgent(agent._id)}>Delete</button></p>
+                                                                    )) : (
+                                                                        <p className="badge bg-secondary ms-2">
+                                                                            {salesAgentsLoading && <div className="spinner-border text-light" role="status">
+                                                                                <span className="visually-hidden">Loading...</span>
+                                                                            </div>}
+                                                                            {salesAgentsError && <p className="text-danger">{salesAgentsError}</p>}
+                                                                            {'  '}No sales Agent is listed</p>
+                                                                    )}
+                                
+                                                                </div>
 
+                                <hr />
 
+                                <div className="d-flex gap-3">
                                 <Link to="/createLead" className="btn btn-primary">
                                     + Add New Lead
                                 </Link>
+                                <Link to="/createAgent" className="btn btn-primary">
+                                    + Add New Agent
+                                </Link>
+                                </div>
                             </div>
                         </div>
                     </div>
