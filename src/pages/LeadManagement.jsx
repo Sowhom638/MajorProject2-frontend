@@ -102,7 +102,7 @@ function LeadManagement() {
                                             <p className="px-3"><b>Status:</b> {lead?.lead.status}</p>
                                             <p className="px-3"><b>Sales Agent:</b> {lead?.lead.salesAgent?.name || "SalesAgent not found"}</p>
                                             <p className="px-3"><b>Lead Source:</b> {lead?.lead.source}</p>
-                                            <p className="px-3"><b>Time to close:</b> in {remainingDays || 0} days</p>
+                                            <p className="px-3"><b>Time to close:</b> in {remainingDays ? remainingDays : 0} days</p>
                                         </div>)
                                         : (
                                             <div className="py-2 d-flex gap-3">
