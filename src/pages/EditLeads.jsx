@@ -265,9 +265,7 @@ function EditLeads() {
                                             id="timeToClose"
                                             className="form-control"
                                             value={timeToClose}
-                                            onChange={(e) => setTimeToClose(e.target.value)}
-                                            min="0"
-                                            required
+                                            disabled
                                         />
                                     </div>
 
