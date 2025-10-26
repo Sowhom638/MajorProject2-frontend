@@ -33,9 +33,9 @@ function LeadManagement() {
         calculateRemaining();
 
         // Update every minute (or every second if needed)
-        const interval = setInterval(calculateRemaining, 60000); // every minute
+        setInterval(calculateRemaining, 60000); // every minute
 
-        return () => clearInterval(interval);
+
     }, [lead?.lead?.createdAt, lead?.lead?.timeToClose]);
 
     async function addNewComment(e) {
