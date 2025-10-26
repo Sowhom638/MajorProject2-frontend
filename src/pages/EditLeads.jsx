@@ -98,7 +98,7 @@ function EditLeads() {
                     salesAgent: agent,
                     status: leadStatus,
                     tags: tag,
-                    timeToClose: leadStatus === 'Closed' ? 0 : Number(timeToClose),
+                    timeToClose: leadStatus === 'Closed' ? 0 : timeToClose,
                     priority: leadPriority
                 })
             });
