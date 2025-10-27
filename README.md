@@ -13,7 +13,7 @@ Built with React frontend, Express/Node backend, and MongoDB database.
 ## Quick Start
 ```
 git clone https://github.com/Sowhom638/MajorProject2-frontend
-cd AnvayaCRM-frontend
+cd <Your-Repo>
 npm install
 npm run dev
 ```
