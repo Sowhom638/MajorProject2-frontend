@@ -257,7 +257,7 @@ function CreateLeadForm() {
                                                 <option disabled>Error loading tags</option>
                                             ) : tags.length > 0 ? (
                                                 tags.map((tagItem) => (
-                                                    <option key={tagItem.id} value={tagItem.name}>
+                                                    <option key={tagItem._id} value={tagItem.name}>
                                                         {tagItem.name}
                                                     </option>
                                                 ))
