@@ -73,7 +73,7 @@ function CreateAgentForm() {
                             {/* Main Content */}
                             <div className="col-md-9 p-4">
                                 {submitError && (
-                                    <div className="alert alert-danger">{submitError}</div>
+                                    <div className="alert alert-danger">{JSON.stringify(submitError)}</div>
                                 )}
 
                                 <form onSubmit={addNewAgent}>
