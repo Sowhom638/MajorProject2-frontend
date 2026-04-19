@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import useFetch from "../../useFetch";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
@@ -13,7 +13,7 @@ function LeadsByAgent() {
 
   // Fetch data
   const { data: leadsData, loading: leadsLoading, error: leadsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/leads`);
-  const { data: agentsData, loading: agentsLoading, error: agentsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/agents`);
+  const { data: agentsData } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/agents`);
 
   // Get current agent
   const currentAgent = agentsData?.find(agent => agent._id === agentId) || {};

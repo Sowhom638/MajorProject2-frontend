@@ -1,15 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useFetch from "../../useFetch";
 import { Link, useParams } from "react-router-dom";
 import { MdKeyboardArrowLeft } from "react-icons/md";
 
 function LeadManagement() {
-    const { leadId } = useParams()
-    const [remainingDays, setRemainingDays] = useState(null);
+    const { leadId } = useParams();
     const [agent, setAgent] = useState('');
     const [commentText, setCommentText] = useState('');
     const { data: lead, loading: leadsLoading, error: leadsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/leads/${leadId}`);
-    const { data: comments, loading: commentsLoading, error: commentsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/leads/${leadId}/comments`);
+    const { data: comments } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/leads/${leadId}/comments`);
     const { data: salesAgents, loading: salesAgentsLoading, error: salesAgentsError } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/agents`);
 
     async function addNewComment(e) {
