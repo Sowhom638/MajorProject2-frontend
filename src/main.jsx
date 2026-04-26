@@ -12,11 +12,16 @@ import LeadsByAgent from './pages/LeadsByAgent.jsx'
 import Settings from './pages/Settings.jsx'
 import EditLeads from './pages/EditLeads.jsx'
 import Reports from './pages/Reports.jsx'
+import Home from './pages/Home.jsx'
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />
+  },
+  {
+    path: "/home",
+    element: <Home />
   },
   {
     path: "/leads",
